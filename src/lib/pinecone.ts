@@ -196,7 +196,7 @@ import {
         pageContent,
         metadata: {
           pageNumber: metadata.loc.pageNumber,
-          text: truncateStringByBytes(pageContent, 18000),
+          text: truncateStringByBytes(pageContent, 5000),
         },
       }),
     ]);

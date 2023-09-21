@@ -56,6 +56,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
         console.log('inserting vectors into pinecone')
         const namespace = convertToAscii(fileKey)
+        console.log(namespace)
         PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10)
         console.log('uploaded into pinecone')
         return documents[0]

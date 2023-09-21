@@ -22,7 +22,7 @@ export async function POST(req:Request) {
             return NextResponse.json({'error': 'chat not found'}, {status: 404})
         }
         const fileKey = _chats[0].fileKey
-        const lastMessage = messages[messages.length -1]
+        const lastMessage = messages[messages.length-1]
         const context = await getContext(lastMessage.content, fileKey)
 
         const prompt = {

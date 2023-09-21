@@ -7,7 +7,6 @@ const config = new Configuration({
 const openai = new OpenAIApi(config)
 
 export async function getEmbeddings(text:string) {
-    console.log(text)
     try {
         const response = await openai.createEmbedding({
             model: 'text-embedding-ada-002',

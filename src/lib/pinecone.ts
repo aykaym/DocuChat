@@ -50,6 +50,18 @@ export async function loadS3IntoPinecone(fileKey: string) {
     console.log('finished vectorising...')
 
     //4. insert into pinecone
+    try {
+        const client = await getPineconeClient()
+        const pineconeIndex = client.Index('chatpdf')
+
+        console.log('inserting vectors into pinecone')
+        const namespace = convertToAscii(fileKey)
+        PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10)
+        console.log('uploaded into pinecone')
+        return documents[0]
+    } catch (error) {
+        console.error('problem upsertting',error)
+    }
     const client = await getPineconeClient()
     const pineconeIndex = client.Index('chatpdf')
 

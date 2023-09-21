@@ -46,7 +46,6 @@ export async function loadS3IntoPinecone(fileKey: string) {
     // 3. Vectorise and embed individual documents
     console.log("starting vectorising...")
     const vectors = await Promise.all(documents.flat().map(embedDocument))
-    console.log(vectors)
     console.log('finished vectorising...')
 
     //4. insert into pinecone
@@ -56,7 +55,6 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
         console.log('inserting vectors into pinecone')
         const namespace = convertToAscii(fileKey)
-        console.log(namespace)
         PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10)
         console.log('uploaded into pinecone')
         return documents[0]

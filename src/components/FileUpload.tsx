@@ -61,25 +61,40 @@ const FileUpload = () => {
         },
     })
   return (
-    <div className='p-2 bg-white rounded-x1'>
+    <div className='w-full'>
         <div {...getRootProps({
             className: 
-                'border-dashed border-2 rounded-x1 cursoe-pointer bg-gray-50 py-8 flex justify-center items-center flex-col'
+                'border-dashed border-2 border-indigo-300 rounded-2xl cursor-pointer bg-gradient-to-br from-indigo-50 to-cyan-50 py-12 px-8 flex justify-center items-center flex-col transition-all duration-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-100 hover:to-cyan-100 group'
 
         })}>
             <input {...getInputProps()} />
             {(uploading || isLoading) ?(
                 <>
-                    {/* loading state */}
-                    <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
-                    <p className='mt-2 text-sm text-slate-400'>
-                        Spilling Tea to GPT
+                    <div className="relative">
+                        <Loader2 className="h-12 w-12 text-indigo-600 animate-spin" />
+                        <div className="absolute inset-0 h-12 w-12 border-2 border-indigo-200 rounded-full animate-pulse"></div>
+                    </div>
+                    <p className='mt-4 text-lg font-medium text-indigo-700'>
+                        Processing your PDF...
+                    </p>
+                    <p className='mt-1 text-sm text-indigo-500'>
+                        This may take a few moments
                     </p>
                 </>
             ): (
             <>
-                <Inbox className = "w-10 h-10 text-blue-500" />
-                <p className="mt-2 text-sm text-slate-400">Drag PDF here</p>
+                <div className="relative">
+                    <Inbox className="w-16 h-16 text-indigo-500 group-hover:text-indigo-600 transition-colors duration-300" />
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">+</span>
+                    </div>
+                </div>
+                <p className="mt-4 text-lg font-semibold text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                    Drop your PDF here or click to browse
+                </p>
+                <p className="mt-2 text-sm text-gray-500">
+                    Supports PDF files up to 10MB
+                </p>
             </>
             )}
         </div>

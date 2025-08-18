@@ -6,7 +6,8 @@ import { chats, messages as _messages } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
-export const runtime = 'edge'
+// Removed edge runtime due to Pinecone v2 compatibility
+// export const runtime = 'edge'
 
 const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -71,6 +72,10 @@ export async function POST(req:Request) {
         })
         return new StreamingTextResponse(stream)
     } catch (error) {
-         
+        console.error('Chat API Error:', error)
+        return NextResponse.json(
+            { error: 'An error occurred while processing your request' },
+            { status: 500 }
+        )
     }
 }

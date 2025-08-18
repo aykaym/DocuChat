@@ -1,46 +1,48 @@
-import { PineconeClient } from "@pinecone-database/pinecone";
+import { Pinecone } from "@pinecone-database/pinecone";
 import { convertToAscii } from "./utils";
 import { getEmbeddings } from "./embeddings";
 
 export async function getMatchesFromEmbeddings(embeddings: number[], fileKey: string) {
-    const pinecone = new PineconeClient
-    await pinecone.init({
-        apiKey: process.env.PINECONE_API_KEY!,
-        environment: process.env.PINECONE_ENVIRONMENT!
-    })
-    const index = await pinecone.Index('chatpdf')
-
     try {
+        const pinecone = new Pinecone({
+            apiKey: process.env.PINECONE_API_KEY!,
+        })
+        const index = pinecone.index('chatpdf')
+
         const namespace = convertToAscii(fileKey)
-        const queryResult = await index.query({
-            queryRequest: {
-                topK: 5,
-                vector: embeddings,
-                includeMetadata: true,
-                namespace
-            }
+        const queryResult = await index.namespace(namespace).query({
+            topK: 5,
+            vector: embeddings,
+            includeMetadata: true
         })
         return queryResult.matches || []
     } catch (error) {
-        console.log('error querying embeddings', error)
-        throw error
+        console.error('Error querying Pinecone:', error)
+        // Return empty array on error to prevent crash
+        return []
     }
 }
 
 
 export async function getContext(query: string, fileKey: string) {
-    const queryEmbeddings = await getEmbeddings(query)
-    const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey)
+    try {
+        const queryEmbeddings = await getEmbeddings(query)
+        const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey)
 
-    const qualifyingDocs = matches.filter(
-        (match) => match.score && match.score > 0.7
-    )
+        const qualifyingDocs = matches.filter(
+            (match) => match.score && match.score > 0.7
+        )
 
-    type Metadata = {
-        text: string,
-        pageNumber: number
+        type Metadata = {
+            text: string,
+            pageNumber: number
+        }
+
+        let docs = qualifyingDocs.map(match => (match.metadata as Metadata).text)
+        return docs.join('\n').substring(0,3000)
+    } catch (error) {
+        console.error('Error getting context:', error)
+        // Return empty context on error to allow chat to continue
+        return ''
     }
-
-    let docs = qualifyingDocs.map(match => (match.metadata as Metadata).text)
-    return docs.join('\n').substring(0,3000)
 }

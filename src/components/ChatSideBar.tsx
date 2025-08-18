@@ -43,16 +43,16 @@ const ChatSideBar = ({chats, chatId, isPro}: Props) => {
         }
     }
     
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
+    const formatDate = (date: Date | string) => {
+        const dateObj = typeof date === 'string' ? new Date(date) : date
         const now = new Date()
-        const diffTime = Math.abs(now.getTime() - date.getTime())
+        const diffTime = Math.abs(now.getTime() - dateObj.getTime())
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         
         if (diffDays === 1) return 'Today'
         if (diffDays === 2) return 'Yesterday'
         if (diffDays <= 7) return `${diffDays} days ago`
-        return date.toLocaleDateString()
+        return dateObj.toLocaleDateString()
     }
   return (
     <div className='w-full max-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 text-white'>
